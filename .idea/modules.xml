@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ORB_SLAM3.iml" filepath="$PROJECT_DIR$/.idea/ORB_SLAM3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/iGPS-SLAM.iml" filepath="$PROJECT_DIR$/.idea/iGPS-SLAM.iml" />
     </modules>
   </component>
 </project>

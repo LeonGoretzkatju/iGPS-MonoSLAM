@@ -1,4 +1,4 @@
-# Install script for directory: /home/yz/wMPS-SLAM/Thirdparty/g2o
+# Install script for directory: /home/deeprealtech/SLAM/iGPS-SLAM/Thirdparty/g2o
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

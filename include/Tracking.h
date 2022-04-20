@@ -40,6 +40,8 @@
 
 #include "GeometricCamera.h"
 
+#include "RealTimeiGPSFusion.h"
+
 #include <mutex>
 #include <unordered_set>
 
@@ -52,6 +54,7 @@ class Atlas;
 class LocalMapping;
 class LoopClosing;
 class System;
+class RealTimeiGPSFusion;
 
 class Tracking
 {  
@@ -78,7 +81,10 @@ public:
     void SetLocalMapper(LocalMapping* pLocalMapper);
     void SetLoopClosing(LoopClosing* pLoopClosing);
     void SetViewer(Viewer* pViewer);
+    void SetRealTimeiGPSFusioner(RealTimeiGPSFusion* pRealTimeiGPSFusioner);
     void SetStepByStep(bool bSet);
+
+    void LoadiGPSPosition(vector<double> vTimestamps, vector<cv::Point3f> viGPSPosition);
 
     // Load new settings
     // The focal lenght should be similar or scale prediction will fail when projecting points
@@ -131,6 +137,9 @@ public:
     std::vector<cv::Point2f> mvbPrevMatched;
     std::vector<cv::Point3f> mvIniP3D;
     Frame mInitialFrame;
+
+    vector<double> mviGPSTimestamps;
+    vector<cv::Point3f> mviGPSPosition;
 
     // Lists used to recover the full camera trajectory at the end of the execution.
     // Basically we store the reference keyframe for each frame and its relative transformation
@@ -250,6 +259,8 @@ protected:
     //Other Thread Pointers
     LocalMapping* mpLocalMapper;
     LoopClosing* mpLoopClosing;
+
+    RealTimeiGPSFusion *mpRealTimeiGPSFusioner;
 
     //ORB
     ORBextractor* mpORBextractorLeft, *mpORBextractorRight;

@@ -200,8 +200,9 @@ void LoadImages(const string &strImagePath, const string &strPathTimes,
 
 void LoadiGPS(vector<cv::Point3f> &iGPSPosition,vector<double> &vTimestampsiGPS)
 {
+    cout << "start loading igps" << endl;
     ifstream fTimes;
-    fTimes.open("../data/MH04/MH04_wMPS.txt");
+    fTimes.open("./data/MH01/MH01_wMPS.txt");
     iGPSPosition.reserve(5000);
     vTimestampsiGPS.reserve(5000);
     while(!fTimes.eof()) {
@@ -213,7 +214,6 @@ void LoadiGPS(vector<cv::Point3f> &iGPSPosition,vector<double> &vTimestampsiGPS)
         if (!s.empty()) {
             stringstream ss;
             ss << s;
-            cout<< s<<endl;
 
             double t,p1,p2,p3;  // Frame
             ss >> t;
@@ -229,4 +229,5 @@ void LoadiGPS(vector<cv::Point3f> &iGPSPosition,vector<double> &vTimestampsiGPS)
 
         }
     }
+    cout << "end read iGPS data" << endl;
 }

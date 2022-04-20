@@ -493,6 +493,12 @@ Tracking::~Tracking()
 
 }
 
+void Tracking::LoadiGPSPosition(vector<double> vTimestamps, vector<cv::Point3f> viGPSPosition)
+{
+    mviGPSTimestamps = vTimestamps;
+    mviGPSPosition = viGPSPosition;
+}
+
 bool Tracking::ParseCamParamFile(cv::FileStorage &fSettings)
 {
     mDistCoef = cv::Mat::zeros(4,1,CV_32F);
@@ -1218,6 +1224,11 @@ void Tracking::SetLocalMapper(LocalMapping *pLocalMapper)
     mpLocalMapper=pLocalMapper;
 }
 
+void Tracking::SetRealTimeiGPSFusioner(RealTimeiGPSFusion *pRealTimeiGPSFusioner)
+{
+    mpRealTimeiGPSFusioner = pRealTimeiGPSFusioner;
+}
+
 void Tracking::SetLoopClosing(LoopClosing *pLoopClosing)
 {
     mpLoopClosing=pLoopClosing;
@@ -1884,6 +1895,54 @@ void Tracking::Track()
                     Verbose::PrintMess("done", Verbose::VERBOSITY_NORMAL);
 
                     return;
+                }
+            }
+            bool bUseMH = true;
+            double time9 = 1e9;
+            if(bUseMH)
+                time9 = 1.0;
+            double td = 0.0;  //iGPS time offset
+            bool binputiGPS = false;
+            mpRealTimeiGPSFusioner->inputVO(time9 * mCurrentFrame.mTimeStamp,mCurrentFrame.mTcw);
+            for(int m = 0 ; m < mviGPSTimestamps.size() ; m ++ )
+            {
+                double t_frame = time9 * mCurrentFrame.mTimeStamp;
+                //cout<< "t_frame = " <<t_frame <<endl;
+                double t_iGPS = mviGPSTimestamps[m] + td;
+                //cout<< "t_iGPS = " <<t_iGPS <<endl;
+
+                if(t_frame >= t_iGPS -0.01 && t_frame <= t_iGPS +0.01)
+                {
+                    mpRealTimeiGPSFusioner->inputiGPS(t_frame,mviGPSPosition[m]);
+                    binputiGPS = true;
+                }
+                else if(t_iGPS >= t_frame + 0.05)
+                    break;
+            }
+            if(!binputiGPS)
+            {
+                for(int m = 0 ; m < mviGPSTimestamps.size()-1 ; m ++ )
+                {
+                    double t_frame = time9 * mCurrentFrame.mTimeStamp;
+                    double t_iGPS = mviGPSTimestamps[m] + td ;
+                    double t_iGPS_next = mviGPSTimestamps[m+1] + td ;
+                    //cout<< "t_frame = " <<t_frame <<endl;
+                    //cout<< "t_iGPS = " <<t_iGPS <<endl;
+                    //cout<< "t_iGPS_next = " <<t_iGPS_next <<endl;
+
+                    if(t_frame > t_iGPS  && t_frame < t_iGPS_next && t_iGPS_next-t_iGPS<10)
+                    {
+                        double t1 = t_iGPS - t_frame;
+                        double t2 = t_iGPS_next - t_iGPS;
+                        double x = (mviGPSPosition[m].x + mviGPSPosition[m+1].x - (mviGPSPosition[m+1].x -mviGPSPosition[m].x) * (t1/t2)) * 0.5f;
+                        double y = (mviGPSPosition[m].y + mviGPSPosition[m+1].y - (mviGPSPosition[m+1].y -mviGPSPosition[m].y) * (t1/t2)) * 0.5f;
+                        double z = (mviGPSPosition[m].z + mviGPSPosition[m+1].z - (mviGPSPosition[m+1].z -mviGPSPosition[m].z) * (t1/t2)) * 0.5f;
+                        cv::Point3f iGPSPosition(x,y,z);
+                        mpRealTimeiGPSFusioner->inputiGPS(t_frame,iGPSPosition);
+                        break;
+                    }
+                    else if(t_iGPS > t_frame)
+                        break;
                 }
             }
 

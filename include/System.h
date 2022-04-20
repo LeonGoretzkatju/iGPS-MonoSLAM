@@ -34,6 +34,7 @@
 #include "LocalMapping.h"
 #include "LoopClosing.h"
 #include "iGPSFusion.h"
+#include "RealTimeiGPSFusion.h"
 #include "KeyFrameDatabase.h"
 #include "ORBVocabulary.h"
 #include "Viewer.h"
@@ -78,6 +79,7 @@ class Tracking;
 class LocalMapping;
 class LoopClosing;
 class iGPSFusion;
+class RealTimeiGPSFusion;
 
 class System
 {
@@ -211,6 +213,10 @@ private:
     //iGPS Fusioner
     iGPSFusion* mpiGPSFusioner;
 
+    //Frame-to-Frame iGPS Fusioner
+    RealTimeiGPSFusion* mpRealTimeiGPSFusioner;
+
+
     // The viewer draws the map and the current camera pose. It uses Pangolin.
     Viewer* mpViewer;
 
@@ -222,6 +228,7 @@ private:
     std::thread* mptLocalMapping;
     std::thread* mptLoopClosing;
     std::thread* mptiGPSFusion;
+    std::thread* mptRealTimeiGPSFusion;
 
     std::thread* mptViewer;
 

@@ -126,8 +126,16 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpiGPSFusioner = new iGPSFusion();
     mptiGPSFusion = new thread(&ORB_SLAM3::iGPSFusion::optimize, mpiGPSFusioner);
 
+    mpRealTimeiGPSFusioner = new RealTimeiGPSFusion();
+    mptRealTimeiGPSFusion = new thread(&ORB_SLAM3::RealTimeiGPSFusion::optimize, mpRealTimeiGPSFusioner);
+
     mpLoopCloser->SetiGPSFusioner(mpiGPSFusioner);
     mpiGPSFusioner->SetLoopCloser(mpLoopCloser);
+
+    mpTracker->SetRealTimeiGPSFusioner(mpRealTimeiGPSFusioner);
+    mpRealTimeiGPSFusioner->SetTracker(mpTracker);
+    mpRealTimeiGPSFusioner->SetLoopCloser(mpLoopCloser);
+
 
     //Initialize the Viewer thread and launch
     if(bUseViewer)
@@ -341,6 +349,7 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp, const
 void System::LoadiGPSPosition(vector<double> vTimestamps, vector<cv::Point3f> iGPSPosition)
 {
     mpLoopCloser->LoadiGPSPosition(vTimestamps,iGPSPosition);
+    mpTracker->LoadiGPSPosition(vTimestamps,iGPSPosition);
 }
 
 void System::ActivateLocalizationMode()
@@ -385,6 +394,7 @@ void System::Shutdown()
     mpLocalMapper->RequestFinish();
     mpLoopCloser->RequestFinish();
     mpiGPSFusioner->RequestFinish();
+    mpRealTimeiGPSFusioner->RequestFinish();
     if(mpViewer)
     {
         mpViewer->RequestFinish();
@@ -394,7 +404,7 @@ void System::Shutdown()
 
     // Wait until all thread have effectively stopped
     while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA()
-    || !mpiGPSFusioner->isFinished())
+    || !mpiGPSFusioner->isFinished() || !mpRealTimeiGPSFusioner->isFinished())
     {
         if(!mpLocalMapper->isFinished())
             cout << "mpLocalMapper is not finished" << endl;

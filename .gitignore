@@ -45,6 +45,7 @@ lib/
 cmake_modules/
 cmake-build-debug/
 cmake-build-release/
+Vocabulary/
 .idea
 
 *.pyc

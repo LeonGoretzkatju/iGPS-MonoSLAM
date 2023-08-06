@@ -32,15 +32,16 @@ Required to calculate the alignment of the trajectory with the ground truth. **R
 
 Clone the repository:
 ```
-git clone https://github.com/UZ-SLAMLab/ORB_SLAM3.git ORB_SLAM3
+git clone https://github.com/LeonGoretzkatju/iGPS-MonoSLAM
 ```
 
-We provide a script `build.sh` to build the *Thirdparty* libraries and *ORB-SLAM3*. Please make sure you have installed all required dependencies (see section 2). Execute:
 ```
-cd ORB_SLAM3
+cd iGPS-MonoSLAM
 chmod +x build.sh
 ./build.sh
 ```
-
-This will create **libORB_SLAM3.so**  at *lib* folder and the executables in *Examples* folder.
+# 4. iGPS-MonoSLAM Running Example
+```
+./Monocular/mono_euroc ../Vocabulary/ORBvoc.txt ./Monocular/EuRoC.yaml your_dataset_path
+```
 

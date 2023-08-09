@@ -5,7 +5,7 @@
 3. An online temporal offset calibration algorithm based on a constant motion model.
 4. The Global Localization is enabled by pose-graph optimization and Global Bundle Adjustment with loop closure, which optimal combinates iGPS and camera.
 
-![Factor Graph](.\img\graph.jpg)
+![Factor Graph](img\graph.jpg)
 
 # 2. Prerequisites
 We have tested the library in **Ubuntu 16.04** and **18.04**, but it should be easy to compile in other platforms. A powerful computer (e.g. i7) will ensure real-time performance and provide more stable and accurate results.

@@ -47,3 +47,8 @@ chmod +x build.sh
 ./Monocular/mono_euroc ../Vocabulary/ORBvoc.txt ./Monocular/EuRoC.yaml your_dataset_path
 ```
 
+# 5. Evaluate Accuracy of Estimated Trajectory
+```
+cd evaluation/
+python evaluate_ate_scale.py first_file second_file --based on args your choose
+```
